@@ -7,15 +7,16 @@ Supports both:
 The mode is auto-detected: if JWT_SECRET is set → legacy HS256, otherwise → JWKS.
 """
 
+import logging
 from functools import lru_cache
 import httpx
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt, jwk
-from jose.utils import base64url_decode
 from app.core.config import settings
 from app.core.supabase import supabase_admin
 
+logger = logging.getLogger(__name__)
 security = HTTPBearer()
 
 
@@ -23,9 +24,13 @@ security = HTTPBearer()
 @lru_cache(maxsize=1)
 def _fetch_jwks() -> dict:
     """Fetch and cache JWKS from Supabase (sync, called once)."""
-    resp = httpx.get(settings.jwks_url, timeout=10)
-    resp.raise_for_status()
-    return resp.json()
+    try:
+        resp = httpx.get(settings.jwks_url, timeout=10)
+        resp.raise_for_status()
+        return resp.json()
+    except Exception as e:
+        logger.error("JWKS fetch failed: %s", e)
+        raise
 
 
 def _get_jwk(kid: str) -> dict:
@@ -48,6 +53,8 @@ def _decode_token(token: str) -> dict:
     header = jwt.get_unverified_header(token)
     kid = header.get("kid")
     alg = header.get("alg", "")
+
+    logger.info("Decoding token: kid=%s alg=%s use_jwks=%s", kid, alg, settings.use_jwks)
 
     if settings.use_jwks:
         # ── JWT Signing Keys mode (asymmetric) ──────────────
@@ -77,16 +84,18 @@ async def get_current_user(
 ) -> dict:
     """Validate Supabase JWT and return user dict."""
     token = credentials.credentials
+    logger.info("Token prefix: %s ...", token[:20] if len(token) > 20 else token)
     try:
         payload = _decode_token(token)
         user_id: str = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    except JWTError:
+    except JWTError as e:
+        logger.error("JWT decode failed: %s", e)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
 
     # Fetch profile from DB
-    result = supabase_admin.table("profiles").select("*").eq("id", user_id).single().execute()
+    result = supabase_admin.table("profiles").select("*").eq("id", user_id).maybe_single().execute()
     if not result.data:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User profile not found")
 
