@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { href: "/blog",       label: "Blog" },
 ];
 
-function ProfileDropdown({ user, signOut }: { user: { email?: string | null }; signOut: () => void }) {
+function ProfileDropdown({ user, profile, signOut }: { user: { email?: string | null }; profile: { display_name?: string | null } | null; signOut: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -25,7 +25,8 @@ function ProfileDropdown({ user, signOut }: { user: { email?: string | null }; s
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
-  const initial = (user.email?.charAt(0) || "?").toUpperCase();
+  const displayName = profile?.display_name || user.email || "?";
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
@@ -52,7 +53,8 @@ function ProfileDropdown({ user, signOut }: { user: { email?: string | null }; s
           }}
         >
           <div style={{ padding: "0.5rem 0.75rem", borderBottom: "1px solid var(--border)", marginBottom: "0.25rem" }}>
-            <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--text)" }}>{user.email}</div>
+            <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--text)" }}>{profile?.display_name || user.email}</div>
+            {profile?.display_name && <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{user.email}</div>}
           </div>
           <Link
             href="/profile"
@@ -86,7 +88,7 @@ function ProfileDropdown({ user, signOut }: { user: { email?: string | null }; s
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -197,7 +199,7 @@ export default function Navbar() {
           )}
 
           {user ? (
-            <ProfileDropdown user={user} signOut={signOut} />
+            <ProfileDropdown user={user} profile={profile} signOut={signOut} />
           ) : (
             <>
               <Link href="/login" id="nav-login" className="btn btn-outline btn-sm" style={{ display: menuOpen ? "none" : undefined }}>

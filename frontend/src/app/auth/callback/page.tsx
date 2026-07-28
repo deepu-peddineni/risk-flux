@@ -27,7 +27,7 @@ function CallbackHandler() {
           localStorage.setItem("access_token", data.session.access_token);
           localStorage.setItem("refresh_token", data.session.refresh_token);
         }
-        router.replace("/profile");
+        router.replace("/");
       } else {
         router.replace("/login");
       }

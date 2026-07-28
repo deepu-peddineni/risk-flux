@@ -27,7 +27,7 @@ export default function LoginPage() {
         setError(signInError.message);
         return;
       }
-      router.replace("/profile");
+      router.replace("/");
     } catch {
       setError("Network error");
     } finally {
