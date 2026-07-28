@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState, useRef } from "react";
-import { Sun, Moon, Search, Menu, X, Zap, User, Settings, LogOut } from "lucide-react";
+import { Sun, Moon, Search, Menu, X, Zap, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth/context";
 
 const NAV_LINKS = [
@@ -57,14 +57,6 @@ function ProfileDropdown({ user, profile, signOut }: { user: { email?: string | 
             {profile?.display_name && <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{user.email}</div>}
           </div>
           <Link
-            href="/profile"
-            className="btn btn-ghost"
-            style={{ width: "100%", justifyContent: "flex-start", gap: "0.5rem", fontSize: "0.8125rem" }}
-            onClick={() => setOpen(false)}
-          >
-            <User size={14} /> Profile
-          </Link>
-          <Link
             href="/settings"
             className="btn btn-ghost"
             style={{ width: "100%", justifyContent: "flex-start", gap: "0.5rem", fontSize: "0.8125rem" }}
@@ -72,13 +64,12 @@ function ProfileDropdown({ user, profile, signOut }: { user: { email?: string | 
           >
             <Settings size={14} /> Settings
           </Link>
-          <hr style={{ margin: "0.25rem 0" }} />
           <button
             className="btn btn-ghost"
             style={{ width: "100%", justifyContent: "flex-start", gap: "0.5rem", fontSize: "0.8125rem", color: "var(--red, #ef4444)" }}
             onClick={() => { signOut(); setOpen(false); }}
           >
-            <LogOut size={14} /> Sign out
+            <LogOut size={14} /> Log out
           </button>
         </div>
       )}
