@@ -12,6 +12,9 @@ class ProfileUpdate(BaseModel):
     display_name: str | None = None
     bio: str | None = None
     avatar_url: str | None = None
+    phone: str | None = None
+    website: str | None = None
+    location: str | None = None
 
 
 @router.get("/me")

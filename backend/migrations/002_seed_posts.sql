@@ -35,26 +35,6 @@ INSERT INTO subcategories (category_id, name, slug, description) VALUES
   ((SELECT id FROM categories WHERE slug = 'technology'), 'Databricks on AWS','databricks-aws', 'Databricks and AWS data platform')
 ON CONFLICT (slug) DO NOTHING;
 
--- ── Create demo admin profile ──────────────────────────────
--- (Replace with your actual Supabase auth user ID after first login)
-INSERT INTO profiles (id, username, display_name, email, role)
-VALUES (
-  '00000000-0000-0000-0000-000000000001',
-  'riskflux',
-  'Risk-Flux',
-  'admin@riskflux.com',
-  'admin'
-) ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO profiles (id, username, display_name, email, role)
-VALUES (
-  '00000000-0000-0000-0000-000000000002',
-  'analyst',
-  'Jane Analyst',
-  'jane@riskflux.com',
-  'user'
-) ON CONFLICT (id) DO NOTHING;
-
 -- ── Domain: Market Risk posts ──────────────────────────────
 INSERT INTO posts (id, title, slug, excerpt, content, author_id, category_id, subcategory_id, type, status, reading_time, published_at, likes_count, views_count)
 VALUES
@@ -64,7 +44,7 @@ VALUES
   'understanding-var-in-energy-markets',
   'A comprehensive guide to VaR models — historical simulation, variance-covariance, and Monte Carlo — applied to power and gas portfolios.',
   E'Value at Risk (VaR) is one of the most widely used risk metrics in energy trading. It quantifies the maximum potential loss on a portfolio over a given time horizon at a given confidence level.\n\n## What is VaR?\n\nFormally, the VaR at confidence level alpha (e.g. 99%) over horizon T is defined as: P(Loss > VaR) = 1 - alpha\n\n## Three Main Approaches\n\n### 1. Historical Simulation\nHistorical simulation uses actual historical returns to estimate the loss distribution. No distributional assumptions are required, making it robust to fat tails common in energy markets.\n\n### 2. Variance-Covariance (Parametric)\nAssumes returns are normally distributed. Fast to compute, but underestimates tail risk in energy markets due to skewness and kurtosis.\n\n### 3. Monte Carlo Simulation\nSimulates thousands of price paths using a stochastic model (e.g. mean-reverting Ornstein-Uhlenbeck for power prices) and computes the portfolio loss distribution.\n\n## Energy Market Specifics\n\nEnergy markets exhibit unique characteristics that make standard VaR models challenging:\n- Price spikes — especially in power markets due to grid constraints\n- Seasonality — heating demand, summer cooling, hydro availability\n- Mean reversion — commodity prices tend to revert to marginal cost\n- Non-linear payoffs — options, tolling agreements, virtual power plants',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'domain'),
   (SELECT id FROM subcategories WHERE slug = 'var'),
   'blog', 'published', 12,
@@ -76,7 +56,7 @@ VALUES
   'pnl-attribution-energy-trading',
   'Break down PnL into risk factor contributions — a practical guide to attributing daily P&L to shifts in price, volatility, and time decay.',
   E'## What is PnL Attribution?\n\nPnL attribution decomposes the daily profit or loss of a trading portfolio into its underlying drivers. This helps traders and risk managers understand what generated the P&L and, more importantly, whether the risks being taken align with strategy.\n\n## Key Components\n\n### 1. Price Return (Delta)\nThe P&L contribution from outright price moves. Computed as the change in underlying price multiplied by the position delta.\n\n### 2. Volatility Return (Vega)\nChanges in implied volatility affect option positions. Vega measures the sensitivity of option price to a 1% change in implied volatility.\n\n### 3. Time Decay (Theta)\nThe passage of time erodes option value. Theta quantifies the daily time decay of option positions.\n\n### 4. Cross Effects\nCorrelations between commodities and the diversification benefits (or lack thereof).\n\n## Implementation Considerations\n\nA robust attribution engine requires:\n- Clean, time-consistent price data\n- Accurate position snapshots\n- Support for both linear and non-linear instruments',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'domain'),
   (SELECT id FROM subcategories WHERE slug = 'pnl'),
   'blog', 'published', 8,
@@ -88,7 +68,7 @@ VALUES
   'credit-risk-energy-trading',
   'An overview of counterparty credit risk, Credit Valuation Adjustment (CVA), and how energy firms manage credit exposure.',
   E'Credit risk remains one of the most significant risks in over-the-counter (OTC) energy trading. Unlike exchange-traded products, OTC trades expose both parties to the risk of default.\n\n## Understanding CVA\n\nCredit Valuation Adjustment (CVA) is the market value of counterparty credit risk. It represents the difference between the risk-free portfolio value and the true portfolio value that accounts for the possibility of counterparty default.\n\n## DVA and FVA\n\nDebit Valuation Adjustment (DVA) captures the benefit of the bank\'s own credit risk. Funding Valuation Adjustment (FVA) accounts for the cost of funding the uncollateralised portion of derivatives.\n\n## Mitigation Strategies\n\n- ISDA Master Agreements\n- Credit Support Annexes (CSA)\n- Central Clearing (CCPs)\n- Collateral management',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'domain'),
   (SELECT id FROM subcategories WHERE slug = 'credit-risk'),
   'blog', 'published', 10,
@@ -100,7 +80,7 @@ VALUES
   'cross-commodity-risk',
   'How to model and hedge cross-commodity correlations in a multi-asset energy portfolio.',
   E'Energy trading desks often manage portfolios spanning crude oil, natural gas, power, coal, and emissions. Understanding cross-commodity correlations is essential for accurate risk aggregation.\n\n## Correlation Breakdowns\n\nCorrelations between commodities change through market regimes. During periods of stress, correlations tend to increase, reducing diversification benefits.\n\n## Modelling Approaches\n\n- Historical correlation matrices\n- Dynamic conditional correlation (DCC) models\n- Copula-based approaches for tail dependencies',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'domain'),
   (SELECT id FROM subcategories WHERE slug = 'cross-commodity'),
   'blog', 'published', 7,
@@ -117,7 +97,7 @@ VALUES
   'python-energy-quant-analytics',
   'A curated guide to Python libraries and patterns for quantitative analysis in energy trading and risk management.',
   E'Python has become the lingua franca of quantitative finance. Here is how we use it at Risk-Flux for energy analytics.\n\n## Core Libraries\n\n- **NumPy/Pandas**: Data manipulation and array operations\n- **SciPy**: Optimisation and statistical functions\n- **scikit-learn**: Machine learning for price forecasting\n- **PyTorch**: Deep learning for volatility surface modelling\n\n## Best Practices\n\n- Use `pandas` with `pd.DataFrame` for time series analysis\n- Leverage `numba` for JIT-compiled performance on Monte Carlo simulations\n- Use `pydantic` for data validation in production pipelines',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'technology'),
   (SELECT id FROM subcategories WHERE slug = 'python'),
   'blog', 'published', 6,
@@ -129,7 +109,7 @@ VALUES
   'building-apis-fastapi',
   'How Risk-Flux uses FastAPI, Supabase, and async patterns to build a production-grade risk analytics API.',
   E'FastAPI provides a modern, high-performance web framework for building APIs. Here is how we structure our backend.\n\n## Why FastAPI?\n\n- Async by default\n- Automatic OpenAPI documentation\n- Pydantic-based request/response validation\n- Excellent performance (on par with Node.js and Go)\n\n## Our Architecture\n\nWe use a layered architecture:\n- **Routes** — thin endpoints that handle HTTP concerns\n- **Services** — business logic\n- **Core** — config, auth, database clients',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'technology'),
   (SELECT id FROM subcategories WHERE slug = 'fastapi'),
   'blog', 'published', 5,
@@ -146,7 +126,7 @@ VALUES
   'ml-volatility-surface-modelling',
   'Using neural networks to model and predict implied volatility surfaces in energy options markets.',
   E'## Why Machine Learning for Volatility?\n\nTraditional volatility surface models (SABR, SVI) are parametric and calibrated to market data. While fast, they struggle to capture the complex dynamics of energy volatility surfaces.\n\n## Our Approach\n\nWe use a hybrid model:\n- A neural network captures the non-linear relationship between market features and implied volatilities\n- A parametric layer ensures no-arbitrage constraints\n- The model recalibrates daily using the latest options settlement data',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'ai'),
   'blog', 'published', 9,
   NOW() - INTERVAL '3 days', 54, 1420
@@ -157,7 +137,7 @@ VALUES
   'ai-agents-trade-surveillance',
   'How we built autonomous AI agents to monitor trading activity and flag potential market abuse in real time.',
   E'## The Problem\n\nTrade surveillance generates enormous volumes of alerts, the majority of which are false positives. Traditional rule-based systems are rigid and require constant tuning.\n\n## The AI Agent Solution\n\nWe built a multi-agent system:\n- **Monitor Agent**: Ingests trade data and applies initial filters\n- **Analysis Agent**: Uses ML models to score alert severity\n- **Report Agent**: Generates formatted alerts with context and supporting evidence\n\nEach agent runs as an autonomous service, communicating via message queues.',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'ai'),
   'blog', 'published', 7,
   NOW() - INTERVAL '1 day', 23, 789
@@ -173,7 +153,7 @@ VALUES
   'navigating-energy-transition-risk',
   'The energy transition is reshaping risk management. Here is what every energy risk professional needs to know.',
   E'The shift from fossil fuels to renewable energy sources presents unprecedented challenges for risk managers.\n\n## New Risk Factors\n\n- Intermittency risk from renewable generation\n- Carbon price volatility\n- Regulatory uncertainty across jurisdictions\n- Technology risk from emerging storage solutions\n\n## Adapting Risk Frameworks\n\nTraditional VaR and stress testing frameworks need to evolve to capture these new risk dimensions.',
-  '00000000-0000-0000-0000-000000000001',
+  NULL,
   (SELECT id FROM categories WHERE slug = 'blog'),
   'blog', 'published', 6,
   NOW() - INTERVAL '8 days', 38, 876
@@ -241,45 +221,42 @@ BEGIN
   SELECT id INTO var_post_id FROM posts WHERE slug = 'understanding-var-in-energy-markets';
   SELECT id INTO python_post_id FROM posts WHERE slug = 'python-energy-quant-analytics';
 
-  -- Insert comments on VaR post
+  -- Comments on VaR post — user_id is NULL until a real user signs up and
+  -- the auto-profile trigger creates their profile row
   INSERT INTO comments (id, post_id, user_id, content, created_at)
   VALUES (
-    gen_random_uuid(), var_post_id,
-    '00000000-0000-0000-0000-000000000002',
-    E'Great overview! One thing to add — for power specifically, the seasonality adjustment in VaR models is critical. We saw significant improvements after incorporating monthly volatility scaling factors.',
+    gen_random_uuid(), var_post_id, NULL,
+    E'Great overview! One thing to add — for power specifically, the seasonality adjustment in VaR models is critical.',
     NOW() - INTERVAL '6 days'
   ) RETURNING id INTO comment1_id;
 
   INSERT INTO comments (id, post_id, user_id, parent_id, content, created_at)
   VALUES (
-    gen_random_uuid(), var_post_id,
-    '00000000-0000-0000-0000-000000000001',
-    E'Good point, Jane. Seasonality is often overlooked. We have found that a regime-switching model (normal vs. stress) also improves VaR accuracy for power portfolios.',
+    gen_random_uuid(), var_post_id, NULL, comment1_id,
+    E'Good point. Seasonality is often overlooked. A regime-switching model (normal vs. stress) also improves VaR accuracy.',
     NOW() - INTERVAL '5 days'
   );
 
   INSERT INTO comments (id, post_id, user_id, parent_id, content, created_at)
   VALUES (
-    gen_random_uuid(), var_post_id,
-    '00000000-0000-0000-0000-000000000002',
+    gen_random_uuid(), var_post_id, NULL, comment1_id,
     E'Absolutely. Are you using a Markov switching model or something simpler like threshold-based regimes?',
     NOW() - INTERVAL '5 days'
   );
 
   INSERT INTO comments (id, post_id, user_id, parent_id, content, created_at)
   VALUES (
-    gen_random_uuid(), var_post_id,
-    '00000000-0000-0000-0000-000000000001',
-    E'We use a threshold-based approach for now — calibrated to the P99/P99.5 level. Markov switching is on the roadmap for Q3 though.',
+    gen_random_uuid(), var_post_id, NULL,
+    (SELECT id FROM comments WHERE content LIKE 'Good point%' ORDER BY created_at LIMIT 1),
+    E'Threshold-based for now, calibrated to P99/P99.5. Markov switching is on the roadmap.',
     NOW() - INTERVAL '4 days'
   );
 
-  -- Comments on Python post
+  -- Comment on Python post
   INSERT INTO comments (id, post_id, user_id, content, created_at)
   VALUES (
-    gen_random_uuid(), python_post_id,
-    '00000000-0000-0000-0000-000000000002',
-    E'Would love to see a follow-up post on using Polars vs Pandas for time-series data. We are evaluating the switch at our desk.',
+    gen_random_uuid(), python_post_id, NULL,
+    E'Would love to see a follow-up on Polars vs Pandas for time-series data.',
     NOW() - INTERVAL '3 days'
   );
 END $$;
