@@ -71,11 +71,11 @@ export default function SettingsPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          display_name: form.display_name || null,
-          bio: form.bio || null,
-          phone: form.phone || null,
-          website: form.website || null,
-          location: form.location || null,
+          display_name: form.display_name,
+          bio: form.bio,
+          phone: form.phone,
+          website: form.website,
+          location: form.location,
         }),
       });
       if (res.ok) {
