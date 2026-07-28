@@ -8,6 +8,7 @@ interface Profile {
   display_name: string | null;
   username: string | null;
   role: string | null;
+  avatar_url: string | null;
 }
 
 interface AuthState {
@@ -38,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const supabase = createClient();
       const { data } = await supabase
         .from("profiles")
-        .select("display_name, username, role")
+        .select("display_name, username, role, avatar_url")
         .eq("id", userId)
         .single();
       if (data) setProfile(data);

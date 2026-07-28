@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState, useRef } from "react";
-import { Sun, Moon, Search, Menu, X, Zap, Settings, LogOut } from "lucide-react";
+import { Sun, Moon, Search, Menu, X, Zap, User, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/lib/auth/context";
 
 const NAV_LINKS = [
@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { href: "/blog",       label: "Blog" },
 ];
 
-function ProfileDropdown({ user, profile, signOut }: { user: { email?: string | null }; profile: { display_name?: string | null } | null; signOut: () => void }) {
+function ProfileDropdown({ user, profile, signOut }: { user: { email?: string | null }; profile: { display_name?: string | null; avatar_url?: string | null } | null; signOut: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -39,9 +39,14 @@ function ProfileDropdown({ user, profile, signOut }: { user: { email?: string | 
           width: 32, height: 32, borderRadius: "50%", padding: 0,
           display: "flex", alignItems: "center", justifyContent: "center",
           background: "var(--bg-muted)", fontWeight: 600, fontSize: "0.8125rem",
+          overflow: "hidden",
         }}
       >
-        {initial}
+        {profile?.avatar_url ? (
+          <img src={profile.avatar_url} alt="" style={{ width: 32, height: 32, objectFit: "cover" }} />
+        ) : (
+          initial
+        )}
       </button>
       {open && (
         <div
@@ -56,6 +61,14 @@ function ProfileDropdown({ user, profile, signOut }: { user: { email?: string | 
             <div style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--text)" }}>{profile?.display_name || user.email}</div>
             {profile?.display_name && <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{user.email}</div>}
           </div>
+          <Link
+            href="/profile"
+            className="btn btn-ghost"
+            style={{ width: "100%", justifyContent: "flex-start", gap: "0.5rem", fontSize: "0.8125rem" }}
+            onClick={() => setOpen(false)}
+          >
+            <User size={14} /> Profile
+          </Link>
           <Link
             href="/settings"
             className="btn btn-ghost"
